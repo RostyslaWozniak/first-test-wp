@@ -1,0 +1,31 @@
+---
+import BlogPost from '../../layouts/BlogPost.astro';
+import { getPostBySlug } from '../../graphQL/queries';
+
+const { slug } = Astro.params;
+
+if (!slug) return Astro.redirect('/404');
+
+const postData = await fetch(import.meta.env.WP_GRAPHQL_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+
+  body: JSON.stringify({
+    query: getPostBySlug(slug),
+  }),
+}).then((res) => res.json());
+
+if (!postData.data.postBy) return Astro.redirect('/404');
+
+const post = postData.data.postBy;
+---
+
+<BlogPost
+  title={post.title}
+  description={post.excerpt}
+  date={new Date(post.date)}
+  updatedDate={new Date(post.modified)}>
+  <Fragment set:html={post.content} />
+</BlogPost>
