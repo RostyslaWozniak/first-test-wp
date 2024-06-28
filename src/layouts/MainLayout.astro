@@ -18,12 +18,11 @@ const { title, description } = Astro.props;
       }
       main {
         width: 960px;
-        text-align: center;
       }
     </style>
   </head>
 
-  <body>
+  <body class="overflow-x-hidden">
     <Header />
     <main>
       <slot />
